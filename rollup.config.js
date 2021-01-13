@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import alias from "@rollup/plugin-alias";
 import replace from "@rollup/plugin-replace";
 import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
@@ -43,6 +44,12 @@ export default {
     file: "public/build/bundle.js",
   },
   plugins: [
+    alias({
+      entries: [
+        { find: "@config", replacement: "./src/config" },
+        { find: "@components", replacement: "./src/components" },
+      ],
+    }),
     replace({
       process: JSON.stringify({
         env: {

@@ -1,11 +1,23 @@
 <script>
+    import Footer from '@components/Footer.svelte'
     let name = process.env.name;
-</script>
+    let like = 0
+    $: likeNeeded = 100 - like;
 
+
+    function handleLike() {
+        like += 1
+    }
+</script>
 <main>
 	<h1>Hello {name}!</h1>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+    <h2>You need {likeNeeded}</h2>
+    <button on:click={handleLike}>
+        {like} {like === 1 ? "like" : "likes"}
+    </button>
 </main>
+<Footer salutation={"Mr. "} />
 
 <style>
 	main {
