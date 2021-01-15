@@ -13,11 +13,16 @@
 	<h1>Hello {name}!</h1>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
     <h2>You need {likeNeeded}</h2>
+    {#if likeNeeded % 2 === 0}
+        <h3>Even likes</h3>
+    {/if}
     <button on:click={handleLike}>
         {like} {like === 1 ? "like" : "likes"}
     </button>
+    <div>
+        <input bind:value={name}/>
+<Footer />
 </main>
-<Footer salutation={"Mr. "} />
 
 <style>
 	main {

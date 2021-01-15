@@ -44,10 +44,17 @@ export default {
     file: "public/build/bundle.js",
   },
   plugins: [
+    // we'll extract any component CSS out into
+    // a separate file - better for performance
+    css({ output: "bundle.css" }),
     alias({
+      resolve: [".svelte", ".js"], //optional, by default this will just look for .js files or folders
       entries: [
         { find: "@config", replacement: "./src/config" },
-        { find: "@components", replacement: "./src/components" },
+        {
+          find: "@components",
+          replacement: "src/components",
+        },
       ],
     }),
     replace({
@@ -64,9 +71,6 @@ export default {
         dev: !production,
       },
     }),
-    // we'll extract any component CSS out into
-    // a separate file - better for performance
-    css({ output: "bundle.css" }),
 
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
