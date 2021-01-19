@@ -7,8 +7,10 @@ import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
+import json from "@rollup/plugin-json";
 
 const production = !process.env.ROLLUP_WATCH;
+
 
 function serve() {
   let server;
@@ -46,11 +48,12 @@ export default {
   plugins: [
     // we'll extract any component CSS out into
     // a separate file - better for performance
-    css({ output: "bundle.css" }),
+    json(),
     alias({
-      resolve: [".svelte", ".js"], //optional, by default this will just look for .js files or folders
+      resolve: [".svelte", ".js", ".json"], //optional, by default this will just look for .js files or folders
       entries: [
         { find: "@config", replacement: "./src/config" },
+        { find: "@data", replacement: "data" },
         {
           find: "@components",
           replacement: "src/components",
@@ -71,7 +74,7 @@ export default {
         dev: !production,
       },
     }),
-
+    css({ output: "bundle.css" }),
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
     // some cases you'll need additional configuration -

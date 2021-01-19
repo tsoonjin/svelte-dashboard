@@ -1,13 +1,25 @@
 <script>
     import Footer from '@components/Footer.svelte'
+    import Nav from '@components/Nav.svelte'
+    import * as metrics from '@data/metrics.json'
+
     let name = process.env.name;
     let like = 0
+    /* const head = {minRequests: "Min Requests", maxRequests: "Max Requests", meanRequests: "Avg Requests", totalRequests: "Total Requests"} */
+    const data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({...v, url: k}))
+     const settings = {
+        sortable: true,
+        pagination: true,
+        rowPerPage: 50,
+        columnFilter: true,
+    }
     $: likeNeeded = 100 - like;
 
 
     function handleLike() {
         like += 1
     }
+
 </script>
 <main>
 	<h1>Hello {name}!</h1>
@@ -16,12 +28,12 @@
     {#if likeNeeded % 2 === 0}
         <h3>Even likes</h3>
     {/if}
+    <Nav menu={{Health: "/health", Security: "/security"}} />
     <button on:click={handleLike}>
         {like} {like === 1 ? "like" : "likes"}
     </button>
-    <div>
-        <input bind:value={name}/>
-<Footer />
+    <input bind:value={name}/>
+    <Footer salutation={"Mr. "}/>
 </main>
 
 <style>
