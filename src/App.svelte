@@ -1,12 +1,30 @@
 <script>
+    import { DataTable } from "carbon-components-svelte";
     import Footer from '@components/Footer.svelte'
     import Nav from '@components/Nav.svelte'
     import * as metrics from '@data/metrics.json'
 
     let name = process.env.name;
     let like = 0
-    /* const head = {minRequests: "Min Requests", maxRequests: "Max Requests", meanRequests: "Avg Requests", totalRequests: "Total Requests"} */
-    const data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({...v, url: k}))
+    const head = [
+        {
+            key: "minRequests",
+            value: "Min Requests"
+        },
+        {
+            key: "meanRequests",
+            value: "Avg Requests"
+        },
+        {
+            key: "maxRequests",
+            value: "Max Requests"
+        },
+        {
+            key: "totalRequests",
+            value: "Total Requests"
+        }
+    ]
+    const data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({...v, id: k}))
      const settings = {
         sortable: true,
         pagination: true,
@@ -28,6 +46,8 @@
     {#if likeNeeded % 2 === 0}
         <h3>Even likes</h3>
     {/if}
+    {console.log(data)}
+    <DataTable zebra headers={head} rows={data} />
     <Nav menu={{Health: "/health", Security: "/security"}} />
     <button on:click={handleLike}>
         {like} {like === 1 ? "like" : "likes"}
@@ -36,7 +56,9 @@
     <Footer salutation={"Mr. "}/>
 </main>
 
-<style>
+<style lang="scss" global>
+    /** Gray 10 theme **/
+    @import "carbon-components-svelte/css/g90";
 	main {
 		text-align: center;
 		padding: 1em;

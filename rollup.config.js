@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import alias from "@rollup/plugin-alias";
 import replace from "@rollup/plugin-replace";
 import svelte from "rollup-plugin-svelte";
+import sveltePreprocess from "svelte-preprocess";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
@@ -10,7 +11,6 @@ import css from "rollup-plugin-css-only";
 import json from "@rollup/plugin-json";
 
 const production = !process.env.ROLLUP_WATCH;
-
 
 function serve() {
   let server;
@@ -69,6 +69,7 @@ export default {
       }),
     }),
     svelte({
+      preprocess: require("svelte-preprocess")(),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production,
