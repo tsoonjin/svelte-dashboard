@@ -47,7 +47,7 @@
         <h3>Even likes</h3>
     {/if}
     {console.log(data)}
-    <DataTable zebra headers={head} rows={data} />
+    <DataTable zebra sortable headers={head} rows={data} />
     <Nav menu={{Health: "/health", Security: "/security"}} />
     <button on:click={handleLike}>
         {like} {like === 1 ? "like" : "likes"}
