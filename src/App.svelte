@@ -6,7 +6,45 @@
 
     let name = process.env.name;
     let like = 0
+    const head2 = [
+        {
+            key: "id",
+            value: "Id"
+        },
+        {
+            key: "minRequests",
+            value: "Min Requests"
+        },
+        {
+            key: "meanRequests",
+            value: "Avg Requests"
+        },
+        {
+            key: "maxRequests",
+            value: "Max Requests"
+        },
+        {
+            key: "totalRequests",
+            value: "Total Requests"
+        },
+        {
+            key: "avgLatency",
+            value: "Avg Latency"
+        },
+        {
+            key: "error5XXRate",
+            value: "Error 5XX Rate"
+        },
+        {
+            key: "totalErrorRate",
+            value: "Total Error Rate"
+        }
+    ]
     const head = [
+        {
+            key: "id",
+            value: "Url"
+        },
         {
             key: "minRequests",
             value: "Min Requests"
@@ -25,6 +63,7 @@
         }
     ]
     const data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({...v, id: k}))
+    const data2 = Object.entries(metrics.backend.apigw.result).map(([k, v]) => ({...v, id: k}))
      const settings = {
         sortable: true,
         pagination: true,
@@ -40,20 +79,11 @@
 
 </script>
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-    <h2>You need {likeNeeded}</h2>
-    {#if likeNeeded % 2 === 0}
-        <h3>Even likes</h3>
-    {/if}
+	<h1>Frontend</h1>
     {console.log(data)}
     <DataTable zebra sortable headers={head} rows={data} />
-    <Nav menu={{Health: "/health", Security: "/security"}} />
-    <button on:click={handleLike}>
-        {like} {like === 1 ? "like" : "likes"}
-    </button>
-    <input bind:value={name}/>
-    <Footer salutation={"Mr. "}/>
+	<h1>Backend</h1>
+    <DataTable zebra sortable headers={head2} rows={data2} />
 </main>
 
 <style lang="scss" global>
