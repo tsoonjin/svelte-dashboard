@@ -1,12 +1,37 @@
 <script>
+    import { onMount } from "svelte";
     import { DataTable, Button, DatePicker, DatePickerInput } from "carbon-components-svelte";
     import Footer from '@components/Footer.svelte'
     import { csvGenerator } from "@utils/csvGenerator.js"
     import Nav from '@components/Nav.svelte'
-    import * as metrics from '@data/metrics.json'
 
+    const metricsEndpoint = "https://d5eng-api.eco.astro.com.my/metrics"
     let name = process.env.name;
     let like = 0
+    let selectedDate = new Date((new Date()).getTime() - (30 * 24 * 3600000))
+    /* let queryDate = `${today.getYear()}/${today.getMonth()}` */
+    let queryDate = `2021/01`
+    let data = {}
+    let data2 = {}
+    let data3 = {}
+
+    onMount(async () => {
+        const res = await fetch(`${metricsEndpoint}/aws/${queryDate}.json`)
+        console.log(res)
+        const metrics = await res.json();
+        console.log(metrics)
+        data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({id: k, ...v}))
+        data2 = Object.entries(metrics.backend.apigw.result).map(([k, v]) => {
+            const { request } = v
+            delete v['request'];
+            return {id: k, ...v, ...request}
+        })
+        data3 = Object.entries(metrics.backend.cf.result).map(([k, v]) => {
+            const { request } = v
+            delete v['request'];
+            return {id: k, ...v, ...request}
+        })
+    });
     const head3 = [
         {
             key: "id",
@@ -93,17 +118,6 @@
             value: "Total Requests"
         }
     ]
-    const data = Object.entries(metrics.frontend.health.result).map(([k, v]) => ({id: k, ...v}))
-    const data2 = Object.entries(metrics.backend.apigw.result).map(([k, v]) => {
-        const { request } = v
-        delete v['request'];
-        return {id: k, ...v, ...request}
-    })
-    const data3 = Object.entries(metrics.backend.cf.result).map(([k, v]) => {
-        const { request } = v
-        delete v['request'];
-        return {id: k, ...v, ...request}
-    })
      const settings = {
         sortable: true,
         pagination: true,
@@ -127,18 +141,22 @@
 <main>
 	<h1>Frontend</h1>
     <h2>Cloudfront</h2>
-    <DatePicker datePickerType="single">
-        <DatePickerInput labelText="Select month" placeholder="mm/yyyy" />
-    </DatePicker>
+    {#if Object.keys(data) > 0}
+    {console.log(data)}
     <DataTable zebra sortable headers={head} rows={data} />
     <Button on:click={downloadHandler(data, head, "portalCF")}>Download</Button>
+    {/if}
 	<h1>Backend</h1>
     <h2>API Gateway</h2>
+    {#if Object.keys(data2) > 0}
     <DataTable zebra sortable headers={head2} rows={data2} />
     <Button on:click={downloadHandler(data2, head2, "serviceAPIGateway")}>Download</Button>
+    {/if}
     <h2>Cloudfront</h2>
+    {#if Object.keys(data3) > 0}
     <DataTable zebra sortable headers={head3} rows={data3} />
     <Button on:click={downloadHandler(data3, head3, "serviceCF")}>Download</Button>
+    {/if}
 </main>
 
 <style lang="scss" global>
