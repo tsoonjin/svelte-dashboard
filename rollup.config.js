@@ -55,6 +55,10 @@ export default {
         { find: "@config", replacement: "./src/config" },
         { find: "@data", replacement: "data" },
         {
+          find: "@utils",
+          replacement: "src/utils",
+        },
+        {
           find: "@components",
           replacement: "src/components",
         },
