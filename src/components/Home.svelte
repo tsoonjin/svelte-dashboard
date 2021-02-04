@@ -1,17 +1,35 @@
 <script>
     import { onMount } from "svelte";
-    import { DataTable, Button, DatePicker, DatePickerInput, Loading } from "carbon-components-svelte";
+    import {
+        DataTable,
+        Button,
+        ComboBox,
+        DatePicker,
+        DatePickerInput,
+        FormGroup,
+        RadioButtonGroup,
+        RadioButton,
+        Loading
+    } from "carbon-components-svelte";
     import Footer from '@components/Footer.svelte'
     import { csvGenerator } from "@utils/csvGenerator.js"
     import Nav from '@components/Nav.svelte'
 
     const metricsEndpoint = "https://d5eng-api.eco.astro.com.my/metrics"
+    const getDailyReportPrefix = (selectedDate) => {
+        const [month, day, year] = selectedDate.split('/')
+        return `${year}/${month}/daily/${day}/${year}-${month}-${day}`
+    }
+    const today = new Date()
+    let queryPeriod = 'monthly'
+    let year = today.getFullYear()
+    let month = today.getMonth()
+    const monthMapping = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     let name = process.env.name;
-    let like = 0
-    let selectedDate = new Date((new Date()).getTime() - (30 * 24 * 3600000))
+    let selectedDate = ""
     /* let queryDate = `${today.getYear()}/${today.getMonth()}` */
-    let queryDate = `2021/01`
-    let data = fetch(`${metricsEndpoint}/aws/${queryDate}.json`).then(res => res.json())
+    $: queryDate = queryPeriod === 'monthly' ? `${year}/${('0' + (month + 1)).slice(-2)}` : getDailyReportPrefix(selectedDate)
+    $: data = fetch(`${metricsEndpoint}/aws/${queryDate}.json`).then(res => res.json())
 
     onMount(() => {
         console.log("Fetching data")
@@ -109,12 +127,7 @@
         rowPerPage: 50,
         columnFilter: true,
     }
-    $: likeNeeded = 100 - like;
 
-
-    function handleLike() {
-        like += 1
-    }
 
     function downloadHandler(data, head, fileName) {
         const tableKeys = Object.keys(data[0])
@@ -125,13 +138,35 @@
 </script>
 <div>
     <h1>D5 Engineering Dashboard</h1>
+    <FormGroup>
+        <RadioButtonGroup name="radio-button-group" bind:selected={queryPeriod} on:change={() => console.log(queryPeriod)}>
+            <RadioButton
+                id="queryPeriod-1"
+                value="monthly"
+                labelText="Monthly"
+            />
+            <RadioButton
+                id="queryPeriod-2"
+                value="daily"
+                labelText="Daily"
+            />
+        </RadioButtonGroup>
+    </FormGroup>
     <div class="config">
-        <DatePicker class="date" datePickerType="single">
-        <DatePickerInput labelText="Start Date" placeholder="mm/dd/yyyy" />
+        {#if queryPeriod === 'daily'}
+        <DatePicker class="date" datePickerType="single" bind:value={selectedDate}>
+        <DatePickerInput placeholder="mm/dd/yyyy"/>
         </DatePicker>
-        <DatePicker class="date" datePickerType="single">
-        <DatePickerInput labelText="End Date" placeholder="mm/dd/yyyy" />
-        </DatePicker>
+        {/if}
+        {#if queryPeriod === 'monthly'}
+            <ComboBox
+                width="300px"
+                placeholder="Select month"
+                items={monthMapping.map((value, index) => ({ id: index, text: value}))}
+                bind:selectedIndex={month}
+                size="sm"
+                />
+        {/if}
     </div>
     <h2>Portal Cloudfront</h2>
     {#await data}
