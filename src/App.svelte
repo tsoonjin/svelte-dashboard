@@ -3,6 +3,7 @@
   import Home from '@components/Home.svelte';
   import NotFound from '@components/NotFound.svelte';
   import Monitoring from '@components/Monitoring.svelte';
+  import Portal from '@components/Portal.svelte';
 
   export let url = '';
 </script>
@@ -26,6 +27,7 @@
 <main>
     <Router url={url}>
         <Route path="monitoring" component={Monitoring} />
+        <Route path="portal" component={Portal} />
         <Route path="/" component={Home} />
         <Route component={NotFound} />
     </Router>
