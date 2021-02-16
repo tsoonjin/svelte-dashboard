@@ -1,5 +1,7 @@
 <script>
     import { onMount } from "svelte";
+    import { Router, Link, Route } from "svelte-routing";
+
     import {
         DataTable,
         Button,
@@ -11,9 +13,11 @@
         RadioButton,
         Loading
     } from "carbon-components-svelte";
+    import Monitoring from '@components/Monitoring.svelte';
+    import Portal from '@components/Portal.svelte';
+    import Home from '@components/Home.svelte';
     import Footer from '@components/Footer.svelte'
     import { csvGenerator } from "@utils/csvGenerator.js"
-    import Nav from '@components/Nav.svelte'
 
     const metricsEndpoint = "https://d5eng-api.eco.astro.com.my/metrics"
     const getDailyReportPrefix = (selectedDate) => {
@@ -138,6 +142,11 @@
 </script>
 <div>
     <h1>D5 Engineering Dashboard</h1>
+    <nav id="menu">
+        <Link to="/">Home | </Link>
+        <Link to="monitoring">Monitoring | </Link>
+            <Link to="portal">Portal</Link>
+    </nav>
     <FormGroup>
         <RadioButtonGroup name="radio-button-group" bind:selected={queryPeriod} on:change={() => console.log(queryPeriod)}>
             <RadioButton
@@ -168,17 +177,6 @@
                 />
         {/if}
     </div>
-    <h2>Portal Cloudfront</h2>
-    {#await data}
-        <Loading withOverlay={false} small />
-    {:then res}
-        <div class="metrics">
-        <DataTable zebra sortable headers={head} rows={Object.entries(res.frontend.health.result).map(([k, v]) => ({id: k, ...v}))}/>
-        <Button class="btn" on:click={downloadHandler(Object.entries(res.frontend.health.result).map(([k, v]) => ({id: k, ...v})), head, "portalCF")}>Download</Button>
-        </div>
-    {:catch error}
-        <p class="empty-data">No data</p>
-    {/await}
     <h2>Service API Gateway</h2>
     {#await data}
         <Loading withOverlay={false} small />
@@ -253,5 +251,10 @@
 
     .empty-data {
         min-height: 200px;
+    }
+
+    #menu {
+        font-size: 1.5em;
+        margin-top: 20px;
     }
 </style>

@@ -11,6 +11,9 @@
         RadioButton,
         Loading
     } from "carbon-components-svelte";
+    import Monitoring from '@components/Monitoring.svelte';
+    import Portal from '@components/Portal.svelte';
+    import Home from '@components/Home.svelte';
     import Footer from '@components/Footer.svelte'
     import { csvGenerator } from "@utils/csvGenerator.js"
     import Nav from '@components/Nav.svelte'
